@@ -1,0 +1,23 @@
+CREATE OR REPLACE VIEW propertyNames AS SELECT DISTINCT e.eventType, p.name FROM events AS e LEFT JOIN properties AS p ON e.time = p.time AND e.user = p.user;
+
+CREATE OR REPLACE VIEW propertyInEvent AS SELECT e.*, p.name, p.value FROM events AS e INNER JOIN properties AS p ON p.time = e.time AND p.user = e.user;
+
+CREATE OR REPLACE VIEW sessionsExt AS SELECT s.*, 
+    (SELECT COUNT(*) FROM events WHERE eventType = 'remarkCreated' AND user = s.user AND session = s.session) AS createdRemarkCount,
+    (SELECT value FROM propertyInEvent WHERE eventType = 'reviewEnded' AND name = 'endTransition' AND user = s.user AND session = s.session) AS endType,
+    (SELECT COUNT(*) FROM events WHERE eventType = 'launch' AND user = s.user AND session = s.session) AS launchCount
+    FROM sessions AS s;
+    
+CREATE OR REPLACE VIEW filterEffectiveness AS SELECT 
+    de.value AS filterName,
+    AVG(CAST(si.value AS SIGNED)) AS avgSize, 
+    MIN(CAST(si.value AS SIGNED)) AS minSize, 
+    MAX(CAST(si.value AS SIGNED)) AS maxSize,
+    COUNT(*) AS anzahl
+    FROM events AS e
+    INNER JOIN properties AS de ON e.time = de.time AND e.user = de.user
+    INNER JOIN properties AS si ON e.time = si.time AND e.user = si.user
+    WHERE de.name = 'description'
+    AND si.name = 'size'
+    AND e.eventType = 'relevanceFilterResult'
+    GROUP BY filterName;

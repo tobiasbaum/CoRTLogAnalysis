@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import de.setsoftware.cortLogAnalysis.model.Event;
@@ -47,6 +48,12 @@ public class BasicStats {
         registerLookup("nw");
         registerLookup("UR");
         registerLookup("ur");
+        registerLookup("AN");
+        registerLookup("an");
+        registerLookup("MI");
+        registerLookup("mi");
+        registerLookup("WR");
+        registerLookup("wr");
     }
 
     private static void registerLookup(final String string) {
@@ -82,34 +89,43 @@ public class BasicStats {
     }
 
     public static void main(final String[] args) throws Exception {
-        final Events events = Events.loadDefault();
-        events.normalizeUsers();
-
-        System.out.println("== Users");
-        final List<Events> users = events.groupBy(Event::getUser);
-        Collections.sort(users, (e1, e2) -> e1.max(Event::getTimestamp).compareTo(e2.max(Event::getTimestamp)));
-        for (final Events eventsForUser : users) {
-            final String user = eventsForUser.getExample().getUser();
-            final Instant minTimestamp = eventsForUser.min(Event::getTimestamp);
-            final Instant maxTimestamp = eventsForUser.max(Event::getTimestamp);
-            System.out.println("User = " + user + " (" + reverseLookup(user) + ")");
-            System.out.println("Events for user = " + eventsForUser.size());
-            System.out.println("Earliest time = " + minTimestamp);
-            System.out.println("Latest time = " + maxTimestamp);
-            System.out.println();
+        for (final Entry<String, String> e1 : lookupMap.entrySet()) {
+            for (final Entry<String, String> e2 : lookupMap.entrySet()) {
+                final String clr1 = e1.getValue();
+                final String clr2 = e2.getValue();
+                if (!clr1.equals(clr1.toUpperCase()) && clr2.equals(clr2.toUpperCase()) && clr1.toUpperCase().equals(clr2)) {
+                    System.out.println(e1 + "-" + e2);
+                }
+            }
         }
-
-        System.out.println("== Versions");
-        final List<Events> versions = groupedStats(events, Event::getTool);
-
-        System.out.println("== Data types");
-        final List<Events> dataTypes = groupedStats(events, Event::getDataType);
-
-        System.out.println("== Total");
-        System.out.println("Events: " + events.size());
-        System.out.println("Users: " + users.size());
-        System.out.println("Versions: " + versions.size());
-        System.out.println("Data types: " + dataTypes.size());
+//        final Events events = Events.loadDefault();
+//        events.normalizeUsers();
+//
+//        System.out.println("== Users");
+//        final List<Events> users = events.groupBy(Event::getUser);
+//        Collections.sort(users, (e1, e2) -> e1.max(Event::getTimestamp).compareTo(e2.max(Event::getTimestamp)));
+//        for (final Events eventsForUser : users) {
+//            final String user = eventsForUser.getExample().getUser();
+//            final Instant minTimestamp = eventsForUser.min(Event::getTimestamp);
+//            final Instant maxTimestamp = eventsForUser.max(Event::getTimestamp);
+//            System.out.println("User = " + user + " (" + reverseLookup(user) + ")");
+//            System.out.println("Events for user = " + eventsForUser.size());
+//            System.out.println("Earliest time = " + minTimestamp);
+//            System.out.println("Latest time = " + maxTimestamp);
+//            System.out.println();
+//        }
+//
+//        System.out.println("== Versions");
+//        final List<Events> versions = groupedStats(events, Event::getTool);
+//
+//        System.out.println("== Data types");
+//        final List<Events> dataTypes = groupedStats(events, Event::getDataType);
+//
+//        System.out.println("== Total");
+//        System.out.println("Events: " + events.size());
+//        System.out.println("Users: " + users.size());
+//        System.out.println("Versions: " + versions.size());
+//        System.out.println("Data types: " + dataTypes.size());
     }
 
     private static List<Events> groupedStats(final Events events, final Function<Event, String> selector) {

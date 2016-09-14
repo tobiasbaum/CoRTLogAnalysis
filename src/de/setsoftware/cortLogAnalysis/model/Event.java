@@ -112,8 +112,8 @@ public class Event {
         return this.splitResource()[1];
     }
 
-    public String getReviewRound() {
-        return this.splitResource()[2];
+    public int getReviewRound() {
+        return Integer.parseInt(this.splitResource()[2]);
     }
 
     public String getSessionId() {

@@ -54,6 +54,8 @@ public class BasicStats {
         registerLookup("mi");
         registerLookup("WR");
         registerLookup("wr");
+        registerLookup("VG");
+        registerLookup("vg");
     }
 
     private static void registerLookup(final String string) {

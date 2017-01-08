@@ -6,7 +6,7 @@ import java.util.List;
 import de.setsoftware.cortLogAnalysis.model.Event;
 import de.setsoftware.cortLogAnalysis.model.Events;
 
-public class ToSqlFull {
+public class CortToSqlFull {
 
     private static final class EventProperty {
         private final Event event;

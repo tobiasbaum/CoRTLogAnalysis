@@ -64,7 +64,7 @@ public class SqlWriter<T> implements Closeable {
         if (o instanceof Instant) {
             return o.toString().replace("T", " ").replaceAll("Z", "");
         } else {
-            return o.toString();
+            return o.toString().replace("\\", "\\\\").replace("'", "\\'");
         }
     }
 
